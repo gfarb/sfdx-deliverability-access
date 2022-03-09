@@ -69,7 +69,9 @@ export default class Access extends SfdxCommand {
   private parseOrgData(user: string): Promise<string> {
     return new Promise((resolve) => {
       const orgDataCommand =
-        user?.length > 0 ? `sfdx force:org:open -r --json -u ${user}` : 'sfdx force:org:open -r --json';
+        user !== undefined && user?.length > 0
+          ? `sfdx force:org:open -r --json -u ${user}`
+          : 'sfdx force:org:open -r --json';
       exec(orgDataCommand, (error, stdout, stderr) => {
         if (error) {
           this.ux.stopSpinner('Access Level could not be set');
