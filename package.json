@@ -1,7 +1,7 @@
 {
   "name": "sfdx-deliverability-access",
-  "description": "email deliv",
-  "version": "0.1.1",
+  "description": "SFDX Plugin to set Email Deliverability Access Level for an org via command line. This project uses Selenium, Webdriver and headless browsing to open Setup in the target org and set Email Deliverability Access Level to the desired value.",
+  "version": "0.1.2",
   "author": "gfarb @gfarb",
   "bugs": "https://github.com/gfarb/sfdx-deliverability-access/issues",
   "dependencies": {
@@ -69,8 +69,8 @@
     "commands": "./lib/commands",
     "bin": "sfdx",
     "topics": {
-      "hello": {
-        "description": "Commands to say hello."
+      "deliverability": {
+        "description": "Commands to set Email Deliverability Access Level for an org via command line."
       }
     },
     "devPlugins": [
