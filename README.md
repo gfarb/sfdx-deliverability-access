@@ -34,12 +34,13 @@ EXAMPLES
 npm i sfdx-deliverability-access
 cd node_modules/sfdx-deliverability-access
 sfdx plugins:link sfdx-deliverability-access
+cd ../..
 sfdx deliverability:access --help
 ```
 
 ## Version History
 
-* 0.0.10
+* 0.0.11
 
 * Initial Release
 
