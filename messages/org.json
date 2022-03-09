@@ -1,0 +1,10 @@
+{
+  "commandDescription": "Set Email Deliverability Access Level for an org.",
+  "userFlagDescription": "Username or alias for the target org; overrides default target org",
+  "levelFlagDescription": "No access: None, none, n, 0\nSystem email only: System, system, s, 1\nAll email: All, all, a, 2",
+  "examples": [
+    "sfdx deliverability:access --level All",
+    "sfdx deliverability:access --level None",
+    "sfdx deliverability:access --level System"
+  ]
+}
