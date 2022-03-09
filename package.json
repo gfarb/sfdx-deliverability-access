@@ -1,7 +1,7 @@
 {
   "name": "sfdx-deliverability-access",
   "description": "email deliv",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "gfarb @gfarb",
   "bugs": "https://github.com/gfarb/sfdx-deliverability-access/issues",
   "dependencies": {
@@ -47,7 +47,9 @@
     "pretty-quick": "^3",
     "sinon": "10.0.0",
     "ts-node": "^10",
-    "typescript": "4"
+    "typescript": "4",
+    "chromedriver": "^99.0.0",
+    "selenium-webdriver": "^4.1.1"
   },
   "engines": {
     "node": ">=12.0.0"
