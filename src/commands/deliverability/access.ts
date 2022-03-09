@@ -56,8 +56,8 @@ export default class Access extends SfdxCommand {
   public async run(): Promise<void> {
     this.ux.startSpinner('Attempting to set Email Deliverability Access Level');
     const accessLevel = this.flags.level as string;
-    const childElementIndex = String(accessValuesMap.get(accessLevel.toLowerCase()));
-    if (Number(childElementIndex) > -1 && Number(childElementIndex) < 3) {
+    const childElementIndex = String(accessValuesMap.get(accessLevel?.toLowerCase()));
+    if (childElementIndex !== 'undefined' && Number(childElementIndex) > -1 && Number(childElementIndex) < 3) {
       const accessUrl: string = await this.parseOrgData(String(this.flags.user));
       void this.toggleDeliverability(accessUrl, childElementIndex);
     } else {

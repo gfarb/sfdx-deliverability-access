@@ -31,16 +31,13 @@ EXAMPLES
 ## Installation
 
 ```
-npm i sfdx-deliverability-access
-cd node_modules/sfdx-deliverability-access
-sfdx plugins:link sfdx-deliverability-access
-cd ../..
+sfdx plugins:install sfdx-deliverability-access
 sfdx deliverability:access --help
 ```
 
 ## Version History
 
-* 0.0.11
+* 0.1.0
 
 * Initial Release
 
