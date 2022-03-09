@@ -1,13 +1,6 @@
 
 sfdx-deliverability-access
 ======================
-## Installation
-
-```
-sfdx plugins:install sfdx-deliverability-access
-sfdx deliverability:access --help
-```
-
 ## `sfdx deliverability:access [-l <string>] [-u <string>]`
 
 This SFDX Plugin was created to set Email Deliverability Access Level for an org easily and quickly. This project uses Selenium, Webdriver and headless browsing to open Setup in the target org and set Email Deliverability Access Level to the desired value.
@@ -34,6 +27,14 @@ EXAMPLES
   sfdx deliverability:access --level System
   sfdx deliverability:access -l a -u gfarb@github.com
 ```
+
+## Installation
+
+```
+sfdx plugins:install sfdx-deliverability-access
+sfdx deliverability:access --help
+```
+
 ## Version History
 
 * 0.1
