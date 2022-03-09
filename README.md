@@ -35,15 +35,19 @@ sfdx plugins:install sfdx-deliverability-access
 sfdx deliverability:access --help
 ```
 
+## Requirements
+
+1. [Google Chrome](https://www.google.com/chrome) (not confirmed, this is a presumption)
+2. [Node.js](https://nodejs.org/en/)
+3. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) 
+
 ## Version History
 
-* 0.1.2
-
-* Initial Release
+* Initial Release (0.1.3)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Supporting Docs
 
