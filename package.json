@@ -1,7 +1,7 @@
 {
   "name": "sfdx-deliverability-access",
   "description": "email deliv",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "gfarb @gfarb",
   "bugs": "https://github.com/gfarb/sfdx-deliverability-access/issues",
   "dependencies": {
