@@ -37,7 +37,7 @@ sfdx deliverability:access --help
 
 ## Version History
 
-* 0.0.5
+* 0.0.6
 
 * Initial Release
 
