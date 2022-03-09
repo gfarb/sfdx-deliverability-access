@@ -93,10 +93,10 @@ export default class Access extends SfdxCommand {
   }
 
   private async toggleDeliverability(accessUrl: string, childElementIndex: string): Promise<void> {
-    const options = new chrome.Options()
-      .addArguments('--no-sandbox')
-      .addArguments('--disable-dev-shm-usage')
-      .addArguments('--headless');
+    const options = new chrome.Options();
+    // .addArguments('--no-sandbox')
+    // .addArguments('--disable-dev-shm-usage')
+    // .addArguments('--headless');
     const driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
     try {
       await driver.manage().setTimeouts({ implicit: 30000, pageLoad: 30000, script: 30000 });
