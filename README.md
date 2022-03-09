@@ -1,19 +1,19 @@
 
 sfdx-deliverability-access
 ======================
-## `sfdx deliverability:access [-l <string>] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]`
+## Description
 
 This SFDX Plugin was created to set Email Deliverability Access Level for an org easily and quickly. This project uses Selenium, Webdriver and headless browsing to open Setup in the target org and set Email Deliverability Access Level to the desired value.
 ```
 USAGE
   $ sfdx deliverability:access [-l <string>] [-u <string>] [--json] [--loglevel 
-  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -l, --level=level
       No access: None, none, n, 0
       System email only: System, system, s, 1
-      All email: All, all, a, 2)
+      All email: All, all, a, 2
 
   -u, --user=user
       Username or alias for the target org; overrides default target org
