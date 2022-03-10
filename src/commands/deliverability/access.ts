@@ -1,4 +1,5 @@
 import * as os from 'os';
+import * as util from 'util';
 import { exec } from 'child_process';
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
@@ -7,6 +8,7 @@ import chrome = require('selenium-webdriver/chrome');
 import until = require('selenium-webdriver/lib/until');
 import chromderiver = require('chromedriver');
 const path = chromderiver.path;
+const execPromise = util.promisify(exec);
 
 const accessValuesMap = new Map<string, string>([
   ['none', '0'],
@@ -67,32 +69,25 @@ export default class Access extends SfdxCommand {
     }
   }
 
-  private parseOrgData(user: string): Promise<string> {
-    return new Promise((resolve) => {
+  private async parseOrgData(user: string): Promise<string> {
+    try {
       const orgDataCommand =
         user !== 'undefined' && user?.length > 0
-          ? `npx sfdx force:org:open -r --json -u ${user}`
-          : 'npx sfdx force:org:open -r --json';
-      exec(orgDataCommand, (error, stdout, stderr) => {
-        if (error) {
-          this.ux.log(String(error));
-          this.ux.stopSpinner('Access Level could not be set');
-          throw new SfdxError(error.message, error.name);
-        }
-        if (stderr) {
-          this.ux.log(String(stderr));
-          this.ux.stopSpinner('Access Level could not be set');
-          throw new SfdxError(stderr, 'sfdx force:org:open');
-        }
-        if (stdout) {
-          const response = JSON.parse(stdout) as JsonResponse;
-          resolve(
-            response.result.url.replace('my.salesforce', 'lightning.force') +
-              '&retURL=/lightning/setup/OrgEmailSettings/home'
-          );
-        }
-      });
-    });
+          ? `sfdx force:org:open -r --json -u ${user}`
+          : 'sfdx force:org:open -r --json';
+      const orgData = await execPromise(orgDataCommand);
+      const response = JSON.parse(orgData.stdout) as JsonResponse;
+      return (
+        response.result.url.replace('my.salesforce', 'lightning.force') +
+        '&retURL=/lightning/setup/OrgEmailSettings/home'
+      );
+    } catch (error) {
+      this.ux.stopSpinner('Access Level could not be set');
+      const errorMessage = `Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag.\n\nError message:\n${String(
+        error
+      )}`;
+      throw new SfdxError(errorMessage);
+    }
   }
 
   private async toggleDeliverability(accessUrl: string, childElementIndex: string): Promise<void> {
