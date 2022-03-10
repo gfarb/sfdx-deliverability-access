@@ -1,4 +1,3 @@
-
 sfdx-deliverability-access
 ======================
 ## `sfdx deliverability:access [-l <string>] [-u <string>]`
@@ -37,14 +36,15 @@ sfdx deliverability:access --help
 
 ## Requirements
 
-1. [Google Chrome](https://www.google.com/chrome) (not confirmed, this is a presumption)
+1. [Google Chrome](https://www.google.com/chrome) _(not confirmed, this is a presumption - if you're running into errors try updating Chrome to the latest version)_
 2. [Node.js](https://nodejs.org/en/)
 3. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
 4. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
 
 ## Version History
 
-* Initial Release (0.1.10)
+* 0.1.11 - Fixes bug by promisifying `exec()` so the plugin can be used in CI/CD flows
+* Initial Release (0.1.4)
 
 ## License
 
