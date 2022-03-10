@@ -39,11 +39,12 @@ sfdx deliverability:access --help
 
 1. [Google Chrome](https://www.google.com/chrome) (not confirmed, this is a presumption)
 2. [Node.js](https://nodejs.org/en/)
-3. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) 
+3. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
+4. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
 
 ## Version History
 
-* Initial Release (0.1.3)
+* Initial Release (0.1.4)
 
 ## License
 

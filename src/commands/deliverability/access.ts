@@ -5,7 +5,8 @@ import { Messages, SfdxError } from '@salesforce/core';
 import webdriver = require('selenium-webdriver');
 import chrome = require('selenium-webdriver/chrome');
 import until = require('selenium-webdriver/lib/until');
-require('chromedriver');
+import chromderiver = require('chromedriver');
+const path = chromderiver.path;
 
 const accessValuesMap = new Map<string, string>([
   ['none', '0'],
@@ -97,7 +98,7 @@ export default class Access extends SfdxCommand {
       .addArguments('--no-sandbox')
       .addArguments('--disable-dev-shm-usage')
       .addArguments('--headless');
-    const service = new chrome.ServiceBuilder(require('chromedriver').path).build();
+    const service = new chrome.ServiceBuilder(String(path)).build();
     chrome.setDefaultService(service);
     const driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
     try {
