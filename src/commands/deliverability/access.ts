@@ -75,10 +75,12 @@ export default class Access extends SfdxCommand {
           : 'npx sfdx force:org:open -r --json';
       exec(orgDataCommand, (error, stdout, stderr) => {
         if (error) {
+          this.ux.log(String(error));
           this.ux.stopSpinner('Access Level could not be set');
           throw new SfdxError(error.message, error.name);
         }
         if (stderr) {
+          this.ux.log(String(stderr));
           this.ux.stopSpinner('Access Level could not be set');
           throw new SfdxError(stderr, 'sfdx force:org:open');
         }
