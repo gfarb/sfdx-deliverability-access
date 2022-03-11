@@ -9,10 +9,10 @@ USAGE
 trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -l, --level=level
-      No access: None, none, n, 0
-      System email only: System, system, s, 1
-      All email: All, all, a, 2
+  -l, --level=level (values are not case sensitive)
+      No access: None, N, 0
+      System email only: System, S, 1
+      All email: All, A, 2
 
   -u, --user=user
       Username or alias for the target org; overrides default target org
@@ -43,7 +43,7 @@ sfdx deliverability:access --help
 
 ## Version History
 
-* 0.1.12 - Fixes bug by promisifying `exec()` so the plugin can be used in CI/CD flows
+* 0.1.13 - Fixes bug by promisifying `exec()` so the plugin can be used in CI/CD flows
 * Initial Release (0.1.4)
 
 ## License

@@ -41,8 +41,6 @@ export default class Access extends SfdxCommand {
 
   public static examples = messages.getMessage('examples').split(os.EOL);
 
-  public static args = [{ name: 'file' }];
-
   protected static flagsConfig = {
     level: flags.string({
       char: 'l',
@@ -104,8 +102,9 @@ export default class Access extends SfdxCommand {
       await driver.wait(until.titleIs('Deliverability | Salesforce'), 30000);
       await driver.sleep(3000);
       await driver.switchTo().frame(0);
-      const scriptToSetAccessLevel = `document.getElementsByClassName('pbSubsection')[0].children[0].children[0].children[0].children[0].children[0].children[${childElementIndex}].selected=true`;
-      await driver.executeScript(scriptToSetAccessLevel);
+      await driver.executeScript(
+        `document.getElementsByClassName('pbSubsection')[0].children[0].children[0].children[0].children[0].children[0].children[${childElementIndex}].selected=true`
+      );
       await driver.findElement(webdriver.By.id('thePage:theForm:editBlock:buttons:saveBtn')).click();
       await driver.sleep(1000);
       this.ux.stopSpinner('Email Deliverability Access Level has been set!');
