@@ -62,7 +62,7 @@ export default class Access extends SfdxCommand {
       const accessUrl: string = await this.parseOrgData(String(this.flags.user));
       void this.toggleDeliverability(accessUrl, childElementIndex);
     } else {
-      this.ux.stopSpinner('Access Level could not be set');
+      this.ux.stopSpinner('❌ Access Level could not be set.');
       throw new SfdxError(`${accessLevel} is not a valid value for the Level flag.`, 'Invalid value for Level flag');
     }
   }
@@ -80,7 +80,7 @@ export default class Access extends SfdxCommand {
         '&retURL=/lightning/setup/OrgEmailSettings/home'
       );
     } catch (error) {
-      this.ux.stopSpinner('Access Level could not be set');
+      this.ux.stopSpinner('❌ Access Level could not be set.');
       const errorMessage = `Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag.\n\nError message:\n${String(
         error
       )}`;
@@ -107,9 +107,9 @@ export default class Access extends SfdxCommand {
       );
       await driver.findElement(webdriver.By.id('thePage:theForm:editBlock:buttons:saveBtn')).click();
       await driver.sleep(1000);
-      this.ux.stopSpinner('Email Deliverability Access Level has been set!');
+      this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
     } catch (error) {
-      this.ux.stopSpinner('Access Level could not be set');
+      this.ux.stopSpinner('❌ Access Level could not be set.');
       this.ux.log(`The following error occurred:\n${String(error)}`);
     } finally {
       await driver.quit();
