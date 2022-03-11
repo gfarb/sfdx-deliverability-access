@@ -81,7 +81,7 @@ export default class Access extends SfdxCommand {
       );
     } catch (error) {
       this.ux.stopSpinner('❌ Access Level could not be set.');
-      const errorMessage = `Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag.\n\nError message:\n${String(
+      const errorMessage = `Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag.\n\n${String(
         error
       )}`;
       throw new SfdxError(errorMessage);
