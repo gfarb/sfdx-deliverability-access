@@ -43,7 +43,7 @@ sfdx deliverability:access --help
 
 ## Version History
 
-* 0.1.15 - Fixes bug by promisifying `exec()` so the plugin can be used in CI/CD flows
+* 0.1.16 - Fixes bug by promisifying `exec()` so the plugin can be used in CI/CD flows
 * Initial Release (0.1.4)
 
 ## License
