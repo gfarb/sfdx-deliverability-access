@@ -1,11 +1,12 @@
-sfdx-deliverability-access
-======================
+# sfdx-deliverability-access
+
 ## `sfdx deliverability:access [-l <string>] [-u <string>]`
 
 This SFDX Plugin was created to set Email Deliverability Access Level for an org easily and quickly. This project uses Selenium, Webdriver and headless browsing to open Setup in the target org and set Email Deliverability Access Level to the desired value.
+
 ```
 USAGE
-  $ sfdx deliverability:access [-l <string>] [-u <string>] [--json] [--loglevel 
+  $ sfdx deliverability:access [-l <string>] [-u <string>] [--json] [--loglevel
 trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -40,11 +41,6 @@ sfdx deliverability:access --help
 2. [Node.js](https://nodejs.org/en/)
 3. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
 4. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
-
-## Version History
-
-* 0.1.16 - Fixes bug by promisifying `exec()` so the plugin can be used in CI/CD flows
-* Initial Release (0.1.4)
 
 ## License
 
