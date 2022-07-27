@@ -6,8 +6,7 @@ import { Messages, SfdxError } from '@salesforce/core';
 import webdriver = require('selenium-webdriver');
 import chrome = require('selenium-webdriver/chrome');
 import until = require('selenium-webdriver/lib/until');
-import chromderiver = require('chromedriver');
-const path = chromderiver.path;
+require('chromedriver');
 const execPromise = util.promisify(exec);
 
 const accessValuesMap = new Map<string, string>([
@@ -89,13 +88,20 @@ export default class Access extends SfdxCommand {
   }
 
   private async toggleDeliverability(accessUrl: string, childElementIndex: string): Promise<void> {
-    const options = new chrome.Options()
-      .addArguments('--no-sandbox')
-      .addArguments('--disable-dev-shm-usage')
-      .addArguments('--headless');
-    const service = new chrome.ServiceBuilder(String(path)).build();
-    chrome.setDefaultService(service);
-    const driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+    let driver;
+    try {
+      const options = new chrome.Options()
+        .addArguments('--no-sandbox')
+        .addArguments('--disable-dev-shm-usage')
+        .addArguments('--headless');
+      driver = await new webdriver.Builder().forBrowser('chrome').setChromeOptions(options).build();
+    } catch (error) {
+      if (String(error).includes('version of ChromeDriver only supports Chrome version')) {
+        this.ux.stopSpinner('❌ Access Level could not be set.');
+        throw new SfdxError(String(error), ' Please update to the latest version by running: npm update chromedriver');
+      }
+    }
+    if (driver === undefined) return;
     try {
       await driver.manage().setTimeouts({ implicit: 30000, pageLoad: 30000, script: 30000 });
       await driver.get(accessUrl);

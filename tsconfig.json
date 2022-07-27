@@ -5,15 +5,8 @@
     "rootDir": "./src",
     "module": "commonjs",
     "strict": true,
-    "lib": [
-      "es6"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["es6"],
+    "types": ["node"]
   },
-  "include": [
-    "./src/**/*",
-    "/Users/gfarb/sfdx-deliverability-access/node_modules/@types/selenium-webdriver/index.d.ts"
-  ]
+  "include": ["./src/**/*", "/Users/gfarb/sfdx-deliverability-access/node_modules/@types/selenium-webdriver/index.d.ts"]
 }
