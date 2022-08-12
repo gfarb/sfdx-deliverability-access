@@ -68,12 +68,7 @@
     "sfdx-plugin",
     "sfdx-cli",
     "sfdx",
-    "salesforce",
-    "salesforcedx",
-    "sfdx-commands",
-    "deliverability",
-    "salesforce-developers",
-    "email"
+    "salesforce"
   ],
   "license": "MIT",
   "oclif": {
