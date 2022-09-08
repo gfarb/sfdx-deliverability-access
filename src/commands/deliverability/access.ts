@@ -119,6 +119,7 @@ export default class Access extends SfdxCommand {
     } catch (error) {
       this.ux.stopSpinner('❌ Access Level could not be set.');
       this.ux.log(`The following error occurred:\n${String(error)}`);
+      this.ux.log(`Chromedriver path: ${chromedriver.path}`);
     } finally {
       await driver.quit();
     }
