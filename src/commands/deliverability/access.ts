@@ -90,6 +90,7 @@ export default class Access extends SfdxCommand {
   private async toggleDeliverability(accessUrl: string, childElementIndex: string): Promise<void> {
     let driver;
     try {
+      this.ux.setSpinnerStatus('Opening headless browser session to toggle deliverability access level.');
       const service = new chrome.ServiceBuilder(String(chromedriver.path)).build();
       chrome.setDefaultService(service);
       const options = new chrome.Options()
@@ -108,6 +109,7 @@ export default class Access extends SfdxCommand {
     try {
       await driver.manage().setTimeouts({ implicit: 30000, pageLoad: 30000, script: 30000 });
       await driver.get(accessUrl);
+      this.ux.setSpinnerStatus('Setting deliverability access level.');
       await driver.wait(until.titleIs('Deliverability | Salesforce'), 30000);
       await driver.sleep(3000);
       await driver.switchTo().frame(0);
