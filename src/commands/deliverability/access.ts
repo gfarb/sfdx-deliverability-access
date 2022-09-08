@@ -100,7 +100,8 @@ export default class Access extends SfdxCommand {
     } catch (error) {
       if (String(error).includes('version of ChromeDriver only supports Chrome version')) {
         this.ux.stopSpinner('❌ Access Level could not be set.');
-        throw new SfdxError(String(error), ' Please make sure you have the correct Chromedriver version installed.');
+        this.ux.log(`Chromedriver path: ${chromedriver.path}`);
+        throw new SfdxError(String(error), ' Please make sure you have the correct Chromedriver version installed');
       }
     }
     if (driver === undefined) return;
@@ -119,7 +120,6 @@ export default class Access extends SfdxCommand {
     } catch (error) {
       this.ux.stopSpinner('❌ Access Level could not be set.');
       this.ux.log(`The following error occurred:\n${String(error)}`);
-      this.ux.log(`Chromedriver path: ${chromedriver.path}`);
     } finally {
       await driver.quit();
     }
