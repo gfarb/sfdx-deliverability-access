@@ -6,7 +6,7 @@ import { Messages, SfdxError } from '@salesforce/core';
 import webdriver = require('selenium-webdriver');
 import chrome = require('selenium-webdriver/chrome');
 import until = require('selenium-webdriver/lib/until');
-import chromedriver = require('chromedriver');
+require('chromedriver');
 const execPromise = util.promisify(exec);
 
 const accessValuesMap = new Map<string, string>([
@@ -90,8 +90,6 @@ export default class Access extends SfdxCommand {
   private async toggleDeliverability(accessUrl: string, childElementIndex: string): Promise<void> {
     let driver;
     try {
-      const service = new chrome.ServiceBuilder(String(chromedriver.path)).build();
-      chrome.setDefaultService(service);
       const options = new chrome.Options()
         .addArguments('--no-sandbox')
         .addArguments('--disable-dev-shm-usage')
