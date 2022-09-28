@@ -1,5 +1,5 @@
 {
-  "extends": "./node_modules/@salesforce/dev-config/tsconfig",
+  "extends": "./node_modules/@salesforce/dev-config/tsconfig.json",
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
@@ -8,5 +8,5 @@
     "lib": ["es6"],
     "types": ["node"]
   },
-  "include": ["./src/**/*", "/Users/gfarb/sfdx-deliverability-access/node_modules/@types/selenium-webdriver/index.d.ts"]
+  "include": ["./src/**/*"],
 }
