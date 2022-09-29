@@ -59,11 +59,10 @@ export default class Access extends SfdxCommand {
       try {
         void this.toggleDeliverability(accessUrl, accessLevelValue);
       } catch (error) {
-        this.ux.stopSpinner(`❌ Access Level could not be set. The following error occurred:\n${String(error)}`);
+        this.stopSpinnerAndLogError(String(error));
       }
     } else {
-      this.ux.stopSpinner('❌ Access Level could not be set.');
-      throw new SfdxError(`${accessLevel} is not a valid value for the Level flag.`, 'Invalid value for Level flag');
+      this.stopSpinnerAndLogError(String(`${accessLevel} is not a valid value for the Level flag.`));
     }
   }
 
@@ -80,12 +79,10 @@ export default class Access extends SfdxCommand {
         '&retURL=/lightning/setup/OrgEmailSettings/home'
       );
     } catch (error) {
-      this.ux.stopSpinner('❌ Access Level could not be set.');
-      throw new SfdxError(
-        `Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag.\n\n${String(
-          error
-        )}`
+      this.stopSpinnerAndLogError(
+        "Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag."
       );
+      return 'undefined';
     }
   }
 
@@ -114,10 +111,15 @@ export default class Access extends SfdxCommand {
     } finally {
       await browser?.close();
       if (error !== undefined) {
-        this.ux.stopSpinner(`❌ Access Level could not be set. The following error occurred:\n\n${String(error)}`);
+        this.stopSpinnerAndLogError(error);
       } else {
         this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
       }
     }
+  }
+
+  private stopSpinnerAndLogError(errorMessage: string): void {
+    this.ux.stopSpinner('❌ Access Level could not be set.');
+    throw new SfdxError(errorMessage);
   }
 }
