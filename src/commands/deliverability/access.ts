@@ -109,13 +109,15 @@ export default class Access extends SfdxCommand {
       await accessLevelField?.select(accessLevelValue);
       await contentFrame?.click('#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn');
       await contentFrame?.waitForSelector('#thePage\\:theForm\\:successText');
-      this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
     } catch (err) {
       error = String(err);
     } finally {
       await browser?.close();
-      if (error !== undefined)
+      if (error !== undefined) {
         this.ux.stopSpinner(`❌ Access Level could not be set. The following error occurred:\n${String(error)}`);
+      } else {
+        this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
+      }
     }
   }
 }
