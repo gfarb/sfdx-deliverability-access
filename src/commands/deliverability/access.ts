@@ -114,7 +114,7 @@ export default class Access extends SfdxCommand {
     } finally {
       await browser?.close();
       if (error !== undefined) {
-        this.ux.stopSpinner(`❌ Access Level could not be set. The following error occurred:\n${String(error)}`);
+        this.ux.stopSpinner(`❌ Access Level could not be set. The following error occurred:\n\n${String(error)}`);
       } else {
         this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
       }
