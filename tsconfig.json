@@ -1,12 +1,12 @@
 {
-  "extends": "./node_modules/@salesforce/dev-config/tsconfig",
+  "extends": "./node_modules/@salesforce/dev-config/tsconfig.json",
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
     "module": "commonjs",
     "strict": true,
-    "lib": ["es6"],
+    "lib": ["es6", "dom"],
     "types": ["node"]
   },
-  "include": ["./src/**/*", "/Users/gfarb/sfdx-deliverability-access/node_modules/@types/selenium-webdriver/index.d.ts"]
+  "include": ["./src/**/*"]
 }

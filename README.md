@@ -2,7 +2,7 @@
 
 ## `sfdx deliverability:access [-l <string>] [-u <string>]`
 
-This SFDX Plugin was created to set Email Deliverability Access Level for an org easily and quickly. This project uses Selenium, Webdriver and headless browsing to open Setup in the target org and set Email Deliverability Access Level to the desired value.
+This SFDX Plugin was created to set Email Deliverability Access Level for an org easily and quickly. This project uses Puppeteer and headless browsing to open Setup in the target org and set Email Deliverability Access Level to the desired value.
 
 ```
 USAGE
@@ -37,10 +37,9 @@ sfdx deliverability:access --help
 
 ## Requirements
 
-1. [Google Chrome](https://www.google.com/chrome)
-2. [Node.js](https://nodejs.org/en/)
-3. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
-4. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
+1. [Node.js](https://nodejs.org/en/)
+1. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
+1. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
 
 ## License
 
@@ -51,3 +50,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 - [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
 - [Salesforce CLI Plug-ins](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_plugin_version.htm)
 - [Salesforce Email Deliverability](https://help.salesforce.com/s/articleView?id=sf.data_sandbox_email_deliverability.htm&type=5)
+- [Puppeteer](https://pptr.dev/)

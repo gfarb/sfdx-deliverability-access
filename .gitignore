@@ -1,3 +1,4 @@
+**/.DS_Store
 *-debug.log
 *-error.log
 /.nyc_output
@@ -5,4 +6,4 @@
 /lib
 /tmp
 node_modules
-**/.DS_Store
+package-lock.json
