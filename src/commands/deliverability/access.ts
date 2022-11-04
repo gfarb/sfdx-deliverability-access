@@ -55,7 +55,8 @@ export default class Access extends SfdxCommand {
     const accessLevel = this.flags.level as string;
     const accessLevelValue = String(accessValuesMap.get(accessLevel?.toLowerCase()));
     if (accessLevelValue !== 'undefined' && Number(accessLevelValue) > -1 && Number(accessLevelValue) < 3) {
-      const accessUrl: string = await this.parseOrgData(String(this.flags.user));
+      const accessUrl = await this.parseOrgData(String(this.flags.user));
+      if (accessUrl === undefined) return;
       try {
         void this.toggleDeliverability(accessUrl, accessLevelValue);
       } catch (error) {
@@ -66,7 +67,7 @@ export default class Access extends SfdxCommand {
     }
   }
 
-  private async parseOrgData(user: string): Promise<string> {
+  private async parseOrgData(user: string): Promise<string | void> {
     try {
       const orgDataCommand =
         user !== 'undefined' && user?.length > 0
@@ -82,13 +83,14 @@ export default class Access extends SfdxCommand {
       this.stopSpinnerAndLogError(
         "Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag."
       );
-      return 'undefined';
+      return;
     }
   }
 
   private async toggleDeliverability(accessUrl: string, accessLevelValue: string): Promise<void> {
     let browser;
     let error;
+    this.ux.setSpinnerStatus('Launching headless browser');
     try {
       browser = await puppeteer.launch({
         headless: true,
@@ -96,6 +98,7 @@ export default class Access extends SfdxCommand {
       });
       const page = await browser.newPage();
       await page.goto(accessUrl);
+      this.ux.setSpinnerStatus('Waiting for page to load');
       const frame = await page.waitForSelector(
         '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe'
       );
@@ -103,6 +106,7 @@ export default class Access extends SfdxCommand {
       const accessLevelField = await contentFrame?.waitForSelector(
         '#thePage\\:theForm\\:editBlock\\:sendEmailAccessControlSection\\:sendEmailAccessControl\\:sendEmailAccessControlSelect'
       );
+      this.ux.setSpinnerStatus('Selecting Deliverability Access Level');
       await accessLevelField?.select(accessLevelValue);
       await contentFrame?.click('#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn');
       await contentFrame?.waitForSelector('#thePage\\:theForm\\:successText');
