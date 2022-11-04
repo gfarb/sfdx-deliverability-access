@@ -90,7 +90,7 @@ export default class Access extends SfdxCommand {
   private async toggleDeliverability(accessUrl: string, accessLevelValue: string): Promise<void> {
     let browser;
     let error;
-    this.ux.setSpinnerStatus('Opening browser.');
+    this.ux.setSpinnerStatus('Launching headless browser');
     try {
       browser = await puppeteer.launch({
         headless: true,
@@ -98,7 +98,7 @@ export default class Access extends SfdxCommand {
       });
       const page = await browser.newPage();
       await page.goto(accessUrl);
-      this.ux.setSpinnerStatus('Waiting for page to load.');
+      this.ux.setSpinnerStatus('Waiting for page to load');
       const frame = await page.waitForSelector(
         '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe'
       );
@@ -106,7 +106,7 @@ export default class Access extends SfdxCommand {
       const accessLevelField = await contentFrame?.waitForSelector(
         '#thePage\\:theForm\\:editBlock\\:sendEmailAccessControlSection\\:sendEmailAccessControl\\:sendEmailAccessControlSelect'
       );
-      this.ux.setSpinnerStatus('Selecting Deliverability Access Level.');
+      this.ux.setSpinnerStatus('Selecting Deliverability Access Level');
       await accessLevelField?.select(accessLevelValue);
       await contentFrame?.click('#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn');
       await contentFrame?.waitForSelector('#thePage\\:theForm\\:successText');
