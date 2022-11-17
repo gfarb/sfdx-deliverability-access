@@ -54,7 +54,6 @@
     "install": "^0.13.0",
     "npm": "^8.18.0",
     "puppeteer": "^18.2.1",
-    "sfdx-cli": "7.172.0",
     "tslib": "^2"
   },
   "devDependencies": {
