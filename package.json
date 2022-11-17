@@ -47,14 +47,14 @@
     "@oclif/command": "^1.8.18",
     "@oclif/config": "^1.18.5",
     "@oclif/errors": "^1",
-    "@salesforce/command": "^4.2.2",
-    "@salesforce/core": "^2.37.1",
+    "@salesforce/command": "4.2.2",
+    "@salesforce/core": "2.37.1",
     "@types/node": "^17.0.21",
     "@types/puppeteer": "^5.4.7",
     "install": "^0.13.0",
     "npm": "^8.18.0",
     "puppeteer": "^18.2.1",
-    "sfdx-cli": "^7.172.0",
+    "sfdx-cli": "7.172.0",
     "tslib": "^2"
   },
   "devDependencies": {
