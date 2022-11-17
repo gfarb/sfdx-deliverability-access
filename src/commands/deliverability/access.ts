@@ -71,8 +71,8 @@ export default class Access extends SfdxCommand {
     try {
       const orgDataCommand =
         user !== 'undefined' && user?.length > 0
-          ? `sfdx force:org:open -r --json -u ${user}`
-          : 'sfdx force:org:open -r --json';
+          ? `npx sfdx force:org:open -r --json -u ${user}`
+          : 'npx sfdx force:org:open -r --json';
       const orgData = await execPromise(orgDataCommand);
       const response = JSON.parse(orgData.stdout) as JsonResponse;
       return (
