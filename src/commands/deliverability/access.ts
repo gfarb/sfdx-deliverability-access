@@ -51,24 +51,21 @@ export default class Access extends SfdxCommand {
   protected static requiresProject = false;
 
   public async run(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.ux.startSpinner('Attempting to set Email Deliverability Access Level');
-      const accessLevel = this.flags.level as string;
-      const accessLevelValue = String(accessValuesMap.get(accessLevel?.toLowerCase()));
-      if (accessLevelValue !== 'undefined' && Number(accessLevelValue) > -1 && Number(accessLevelValue) < 3) {
-        this.parseOrgData(String(this.flags.user))
-          .then((accessUrl) => {
-            if (accessUrl !== undefined) void this.toggleDeliverability(accessUrl, accessLevelValue);
-          })
-          .catch((error: string) => {
-            this.stopSpinnerAndLogError(error);
-            reject(error);
-          });
-      } else {
-        this.stopSpinnerAndLogError(String(`${accessLevel} is not a valid value for the Level flag.`));
+    this.ux.startSpinner('Attempting to set Email Deliverability Access Level');
+    const accessLevel = this.flags.level as string;
+    const accessLevelValue = String(accessValuesMap.get(accessLevel?.toLowerCase()));
+    if (accessLevelValue !== 'undefined' && Number(accessLevelValue) > -1 && Number(accessLevelValue) < 3) {
+      const accessUrl = await this.parseOrgData(String(this.flags.user));
+      if (accessUrl === undefined) return;
+      try {
+        await this.toggleDeliverability(accessUrl, accessLevelValue);
+      } catch (error) {
+        this.stopSpinnerAndLogError(String(error));
       }
-      resolve();
-    });
+    } else {
+      this.stopSpinnerAndLogError(String(`${accessLevel} is not a valid value for the Level flag.`));
+    }
+    return;
   }
 
   private async parseOrgData(user: string): Promise<string | void> {
