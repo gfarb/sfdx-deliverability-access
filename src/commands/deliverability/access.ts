@@ -65,7 +65,6 @@ export default class Access extends SfdxCommand {
     } else {
       this.stopSpinnerAndLogError(String(`${accessLevel} is not a valid value for the Level flag.`));
     }
-    return;
   }
 
   private async parseOrgData(user: string): Promise<string | void> {
