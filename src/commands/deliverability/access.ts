@@ -58,7 +58,7 @@ export default class Access extends SfdxCommand {
       const accessUrl = await this.parseOrgData(String(this.flags.user));
       if (accessUrl === undefined) return;
       try {
-        void this.toggleDeliverability(accessUrl, accessLevelValue);
+        await this.toggleDeliverability(accessUrl, accessLevelValue);
       } catch (error) {
         this.stopSpinnerAndLogError(String(error));
       }
