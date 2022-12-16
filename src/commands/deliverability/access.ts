@@ -58,8 +58,7 @@ export default class Access extends SfdxCommand {
       if (accessLevelValue !== 'undefined' && Number(accessLevelValue) > -1 && Number(accessLevelValue) < 3) {
         this.parseOrgData(String(this.flags.user))
           .then((accessUrl) => {
-            if (accessUrl === undefined) return;
-            void this.toggleDeliverability(accessUrl, accessLevelValue);
+            if (accessUrl !== undefined) void this.toggleDeliverability(accessUrl, accessLevelValue);
           })
           .catch((error: string) => {
             this.stopSpinnerAndLogError(error);
