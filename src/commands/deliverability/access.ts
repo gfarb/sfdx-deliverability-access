@@ -3,7 +3,8 @@ import * as util from 'util';
 import { exec } from 'child_process';
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
-import puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer';
+
 const execPromise = util.promisify(exec);
 
 const accessValuesMap = new Map<string, string>([
@@ -32,6 +33,20 @@ export interface Result {
   username: string;
 }
 
+// CSS-escaped IDs for Salesforce Visualforce elements
+const SELECTORS = {
+  iframe:
+    '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe',
+  accessLevelSelect:
+    '#thePage\\:theForm\\:editBlock\\:sendEmailAccessControlSection\\:sendEmailAccessControl\\:sendEmailAccessControlSelect',
+  substituteEmailCheckbox:
+    '#thePage\\:theForm\\:editBlock\\:domainAuthSection\\:substituteEmailDomain\\:cbSubstituteEmailDomain',
+  saveButton:
+    '#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn',
+  successText:
+    '#thePage\\:theForm\\:successText',
+};
+
 export default class Access extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
@@ -54,11 +69,12 @@ export default class Access extends SfdxCommand {
     this.ux.startSpinner('Attempting to set Email Deliverability Access Level');
     const accessLevel = this.flags.level as string;
     const accessLevelValue = String(accessValuesMap.get(accessLevel?.toLowerCase()));
+
     if (accessLevelValue !== 'undefined' && Number(accessLevelValue) > -1 && Number(accessLevelValue) < 3) {
-      const accessUrl = await this.parseOrgData(String(this.flags.user));
-      if (accessUrl === undefined) return;
+      const authUrl = await this.parseOrgData(String(this.flags.user));
+      if (authUrl === undefined) return;
       try {
-        await this.toggleDeliverability(accessUrl, accessLevelValue);
+        await this.toggleDeliverability(authUrl, accessLevelValue);
       } catch (error) {
         this.stopSpinnerAndLogError(String(error));
       }
@@ -75,10 +91,9 @@ export default class Access extends SfdxCommand {
           : 'npx sfdx force:org:open -r --json';
       const orgData = await execPromise(orgDataCommand);
       const response = JSON.parse(orgData.stdout) as JsonResponse;
-      return (
-        response.result.url.replace('my.salesforce', 'lightning.force') +
-        '&retURL=/lightning/setup/OrgEmailSettings/home'
-      );
+      // Return the raw auth URL — we'll navigate to the settings page
+      // after the session is established in the browser
+      return response.result.url;
     } catch (error) {
       this.stopSpinnerAndLogError(
         "Unable to parse url from 'sfdx force:org:open' command. Please make sure you have a default org set or you are passing a valid username/alias with the '-u' or '--user' flag."
@@ -87,29 +102,58 @@ export default class Access extends SfdxCommand {
     }
   }
 
-  private async toggleDeliverability(accessUrl: string, accessLevelValue: string): Promise<void> {
+  private async toggleDeliverability(authUrl: string, accessLevelValue: string): Promise<void> {
     let browser;
     let error;
     this.ux.setSpinnerStatus('Launching headless browser');
+
     try {
       browser = await puppeteer.launch({
-        headless: true,
+        headless: 'shell',
         args: ['--disable-web-security', '--no-sandbox'],
       });
+
       const page = await browser.newPage();
-      await page.goto(accessUrl);
-      this.ux.setSpinnerStatus('Waiting for page to load');
-      const frame = await page.waitForSelector(
-        '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe'
-      );
-      const contentFrame = await frame?.contentFrame();
-      const accessLevelField = await contentFrame?.waitForSelector(
-        '#thePage\\:theForm\\:editBlock\\:sendEmailAccessControlSection\\:sendEmailAccessControl\\:sendEmailAccessControlSelect'
-      );
+
+      // Step 1: Navigate to the auth URL to establish the Salesforce session.
+      // The frontdoor.jsp URL logs us in and redirects to the org.
+      this.ux.setSpinnerStatus('Authenticating with org');
+      await page.goto(authUrl, { waitUntil: 'networkidle2' });
+
+      // Step 2: Now that the session cookie is set, navigate directly to
+      // the Email Deliverability settings page on the authenticated domain.
+      const currentUrl = new URL(page.url());
+      const settingsUrl = `${currentUrl.protocol}//${currentUrl.host}/lightning/setup/OrgEmailSettings/home`;
+      this.ux.setSpinnerStatus('Navigating to Email Deliverability settings');
+      await page.goto(settingsUrl, { waitUntil: 'networkidle2' });
+
+      // Step 3: The settings are rendered inside a legacy Visualforce iframe.
+      this.ux.setSpinnerStatus('Waiting for settings page to load');
+      const frameHandle = await page.waitForSelector(SELECTORS.iframe, { timeout: 30000 });
+      const contentFrame = await frameHandle?.contentFrame();
+
+      if (!contentFrame) {
+        throw new Error('Could not access the settings iframe. The page structure may have changed.');
+      }
+
+      // Step 4: Set the Access Level dropdown.
       this.ux.setSpinnerStatus('Selecting Deliverability Access Level');
+      const accessLevelField = await contentFrame.waitForSelector(SELECTORS.accessLevelSelect, { timeout: 15000 });
       await accessLevelField?.select(accessLevelValue);
-      await contentFrame?.click('#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn');
-      await contentFrame?.waitForSelector('#thePage\\:theForm\\:successText');
+
+      // Step 5: Ensure "Use a substitute email address for unverified domains" is checked.
+      this.ux.setSpinnerStatus('Enabling substitute email address for unverified domains');
+      const checkbox = await contentFrame.waitForSelector(SELECTORS.substituteEmailCheckbox, { timeout: 15000 });
+      const isChecked = await checkbox?.evaluate((el) => (el as HTMLInputElement).checked);
+      if (!isChecked) {
+        await checkbox?.click();
+      }
+
+      // Step 6: Save the form and wait for the success confirmation.
+      this.ux.setSpinnerStatus('Saving settings');
+      await contentFrame.click(SELECTORS.saveButton);
+      await contentFrame.waitForSelector(SELECTORS.successText, { timeout: 15000 });
+
     } catch (err) {
       error = String(err);
     } finally {
@@ -117,13 +161,13 @@ export default class Access extends SfdxCommand {
       if (error !== undefined) {
         this.stopSpinnerAndLogError(error);
       } else {
-        this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
+        this.ux.stopSpinner('🎉 Email Deliverability settings have been updated!');
       }
     }
   }
 
   private stopSpinnerAndLogError(errorMessage: string): void {
-    this.ux.stopSpinner('❌ Access Level could not be set.');
+    this.ux.stopSpinner('❌ Settings could not be updated.');
     throw new SfdxError(errorMessage);
   }
 }
