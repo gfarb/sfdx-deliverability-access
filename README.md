@@ -37,17 +37,26 @@ sfdx deliverability:access --help
 
 ## Requirements
 
-1. [Node.js](https://nodejs.org/en/)
+1. [Node.js](https://nodejs.org/en/) 18 or newer (including the runtime used by Salesforce CLI)
 1. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
 1. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
-1. On macOS, [Google Chrome](https://www.google.com/chrome/) (stable) installed in its standard application location, using a build compatible with your Mac.
 
 ## Browser selection and macOS troubleshooting
 
-On macOS, the plugin uses installed Google Chrome rather than Puppeteer 18's bundled
-Chromium, which defaults to an Intel build even on Apple Silicon. This avoids relying
-on Rosetta to run an Intel browser. On other operating systems, the plugin continues
-to use Puppeteer's default browser selection.
+The plugin uses Puppeteer 24 to download and manage a compatible Chrome for Testing
+browser during installation. A separate Google Chrome installation is **not required**.
+Puppeteer selects native ARM64 Chrome on Apple Silicon and x64 Chrome on Intel Macs;
+Rosetta is not required when using native ARM64 Node. Windows and Linux continue to
+use Puppeteer's managed browser by default.
+
+This update raises the Node minimum from 12 to 18. Use a currently supported Node
+release and a Salesforce CLI runtime meeting that minimum. Browser provisioning
+requires network access during installation, enabled dependency install scripts,
+and a writable Puppeteer cache (by default `~/.cache/puppeteer`). The same cache must
+be accessible when running the plugin; `PUPPETEER_CACHE_DIR` can override its location.
+Do not set `PUPPETEER_SKIP_DOWNLOAD` or `PUPPETEER_CHROME_SKIP_DOWNLOAD` unless supplying
+a compatible executable yourself. After changing Node's CPU architecture, reinstall
+the plugin with downloads enabled to provision the matching browser.
 
 To use Chrome/Chromium from a custom location on any platform, set
 `PUPPETEER_EXECUTABLE_PATH` to the **executable**, not the `.app` directory:
@@ -57,9 +66,9 @@ export PUPPETEER_EXECUTABLE_PATH="/Applications/Google Chrome.app/Contents/MacOS
 ```
 
 An explicit path takes precedence over automatic selection. Invalid paths or launch
-failures are reported without silently trying another browser. This plugin still
-uses Puppeteer 18; a custom or newer Chrome build must also support its automation
-protocol. Browser selection does not change the target org or requested access level.
+failures are reported without silently trying another browser. A custom Chrome build
+must support the installed Puppeteer version's automation protocol. Browser selection
+does not change the target org or requested access level.
 Puppeteer's existing `npm_config_puppeteer_executable_path` and
 `npm_package_config_puppeteer_executable_path` aliases are also honored, in that order
 after `PUPPETEER_EXECUTABLE_PATH`.
@@ -77,14 +86,17 @@ browser path in the last command):
 ```sh
 uname -m
 node -p 'process.platform + "/" + process.arch'
-file "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+file "/path/to/the/selected/browser/executable"
 ```
 
 If Salesforce CLI uses its own Node runtime, the `node` on your shell's PATH may
 have a different architecture; the plugin's launch error reports its actual runtime.
-On Apple Silicon, install native ARM64 or universal Chrome. On Intel Macs, install
-an Intel-compatible build. Remove or correct any stale `PUPPETEER_EXECUTABLE_PATH`
-override. Installing Rosetta is not required by the macOS browser-selection fix.
+Puppeteer 18 previously defaulted to Intel Chromium on macOS, including Apple Silicon;
+this is consistent with the reported error but does not prove which binary failed on
+an affected machine. Remove or correct stale executable overrides. If a managed browser
+is missing, reinstall with downloads enabled and verify cache access. For custom browsers,
+use native ARM64 or universal Chrome on Apple Silicon, or x64 Chrome on Intel Macs.
+Do not install Rosetta as a workaround for an incompatible managed browser.
 
 Existing plugin installations do not pick up source changes automatically. Once a
 maintainer releases a version containing this fix, reinstall the plugin:
@@ -93,10 +105,6 @@ maintainer releases a version containing this fix, reinstall the plugin:
 sfdx plugins:uninstall sfdx-deliverability-access
 sfdx plugins:install sfdx-deliverability-access
 ```
-
-On macOS, the unused bundled Chromium download can optionally be skipped during
-installation by prefixing the install command with `PUPPETEER_SKIP_DOWNLOAD=true`.
-Installed Chrome is still required.
 
 Before that release, developers can build this checkout with `npm install` and
 `npm run build`, then use `sfdx plugins:link .` to test the local version. Linking

@@ -4,8 +4,9 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "module": "commonjs",
+    "target": "es2022",
     "strict": true,
-    "lib": ["es6", "dom"],
+    "lib": ["es2022", "dom"],
     "types": ["node"]
   },
   "include": ["./src/**/*"]
