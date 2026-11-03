@@ -94,7 +94,8 @@ export default class Access extends SfdxCommand {
     try {
       browser = await launchBrowser();
       const page = await browser.newPage();
-      await page.goto(accessUrl);
+      // Setup login can redirect again after the initial page load.
+      await page.goto(accessUrl, { waitUntil: 'networkidle2' });
       this.ux.setSpinnerStatus('Waiting for page to load');
       const frame = await page.waitForSelector(
         '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe'
