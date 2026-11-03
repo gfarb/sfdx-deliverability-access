@@ -3,7 +3,7 @@ import * as util from 'util';
 import { exec } from 'child_process';
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
-import puppeteer = require('puppeteer');
+import { launchBrowser } from '../../browser';
 const execPromise = util.promisify(exec);
 
 const accessValuesMap = new Map<string, string>([
@@ -92,10 +92,7 @@ export default class Access extends SfdxCommand {
     let error;
     this.ux.setSpinnerStatus('Launching headless browser');
     try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: ['--disable-web-security', '--no-sandbox'],
-      });
+      browser = await launchBrowser();
       const page = await browser.newPage();
       await page.goto(accessUrl);
       this.ux.setSpinnerStatus('Waiting for page to load');
