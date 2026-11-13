@@ -37,9 +37,24 @@ sfdx deliverability:access --help
 
 ## Requirements
 
-1. [Node.js](https://nodejs.org/en/)
+1. [Node.js](https://nodejs.org/en/) 18 or newer (including the runtime used by Salesforce CLI)
 1. [Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm)
 1. [Salesforce Lightning](https://www.salesforce.com/products/platform/lightning/)
+
+## Browser setup
+
+Puppeteer downloads a native browser automatically; **no separate Chrome is required**.
+Installation needs network access, enabled dependency install scripts, and a writable
+cache accessible at runtime (`~/.cache/puppeteer` or `PUPPETEER_CACHE_DIR`).
+
+For a custom compatible executable (not the `.app` directory), use
+`export PUPPETEER_EXECUTABLE_PATH="/path/to/browser"`.
+
+Migrate the removed `npm_config_puppeteer_executable_path` and
+`npm_package_config_puppeteer_executable_path` aliases to `PUPPETEER_EXECUTABLE_PATH`.
+
+macOS error `-86` means an incompatible CPU type. Correct stale overrides and use a
+browser matching the CLI's Node architecture (native ARM64 on Apple Silicon).
 
 ## License
 

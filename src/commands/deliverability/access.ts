@@ -3,8 +3,14 @@ import * as util from 'util';
 import { exec } from 'child_process';
 import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
-import puppeteer = require('puppeteer');
+import { ElementHandle, Frame, Page } from 'puppeteer';
+import { getErrorMessage, launchBrowser } from '../../browser';
 const execPromise = util.promisify(exec);
+const setupFrameSelector = '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe';
+const accessLevelSelector =
+  '#thePage\\:theForm\\:editBlock\\:sendEmailAccessControlSection\\:sendEmailAccessControl\\:sendEmailAccessControlSelect';
+const navigationErrorPattern =
+  /Execution context was destroyed|Cannot find context with specified id|frame.*detached|detached frame/i;
 
 const accessValuesMap = new Map<string, string>([
   ['none', '0'],
@@ -60,7 +66,7 @@ export default class Access extends SfdxCommand {
       try {
         await this.toggleDeliverability(accessUrl, accessLevelValue);
       } catch (error) {
-        this.stopSpinnerAndLogError(String(error));
+        this.stopSpinnerAndLogError(error);
       }
     } else {
       this.stopSpinnerAndLogError(String(`${accessLevel} is not a valid value for the Level flag.`));
@@ -88,42 +94,56 @@ export default class Access extends SfdxCommand {
   }
 
   private async toggleDeliverability(accessUrl: string, accessLevelValue: string): Promise<void> {
-    let browser;
-    let error;
     this.ux.setSpinnerStatus('Launching headless browser');
+    const browser = await launchBrowser();
     try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: ['--disable-web-security', '--no-sandbox'],
-      });
       const page = await browser.newPage();
       await page.goto(accessUrl);
       this.ux.setSpinnerStatus('Waiting for page to load');
-      const frame = await page.waitForSelector(
-        '#setupComponent > div.setupcontent > div > div > force-aloha-page > div > iframe'
-      );
-      const contentFrame = await frame?.contentFrame();
-      const accessLevelField = await contentFrame?.waitForSelector(
-        '#thePage\\:theForm\\:editBlock\\:sendEmailAccessControlSection\\:sendEmailAccessControl\\:sendEmailAccessControlSelect'
-      );
+      const { frame, field } = await this.waitForDeliverabilityField(page);
       this.ux.setSpinnerStatus('Selecting Deliverability Access Level');
-      await accessLevelField?.select(accessLevelValue);
-      await contentFrame?.click('#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn');
-      await contentFrame?.waitForSelector('#thePage\\:theForm\\:successText');
-    } catch (err) {
-      error = String(err);
+      await field.select(accessLevelValue);
+      await frame.click('#thePage\\:theForm\\:editBlock\\:buttons\\:saveBtn');
+      await frame.waitForSelector('#thePage\\:theForm\\:successText');
     } finally {
-      await browser?.close();
-      if (error !== undefined) {
-        this.stopSpinnerAndLogError(error);
-      } else {
-        this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
-      }
+      await browser.close();
     }
+    this.ux.stopSpinner('🎉 Email Deliverability Access Level has been set!');
   }
 
-  private stopSpinnerAndLogError(errorMessage: string): void {
+  private async waitForDeliverabilityField(page: Page): Promise<{ frame: Frame; field: ElementHandle }> {
+    const deadline = Date.now() + 60000;
+    let navigationError: unknown;
+    while (Date.now() < deadline) {
+      const frameTimeout = deadline - Date.now();
+      if (frameTimeout <= 0) break;
+      try {
+        const iframe = await page.waitForSelector(setupFrameSelector, { timeout: frameTimeout });
+        const frame = await iframe?.contentFrame();
+        const fieldTimeout = deadline - Date.now();
+        if (frame && fieldTimeout > 0) {
+          const field = await frame.waitForSelector(accessLevelSelector, { timeout: fieldTimeout });
+          if (field) return { frame, field };
+        }
+      } catch (error) {
+        const cause = error instanceof Error ? error.cause : undefined;
+        if (!navigationErrorPattern.test(`${getErrorMessage(error)} ${getErrorMessage(cause)}`)) throw error;
+        navigationError = error;
+      }
+      // A redirect can invalidate a handle after waitForSelector has resolved.
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) break;
+      this.ux.setSpinnerStatus('Waiting for setup navigation to finish');
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+    }
+    throw new Error('Timed out waiting for the Deliverability setup controls after 60000 ms', {
+      cause: navigationError,
+    });
+  }
+
+  private stopSpinnerAndLogError(error: unknown): never {
     this.ux.stopSpinner('❌ Access Level could not be set.');
-    throw new SfdxError(errorMessage);
+    const cause = error instanceof Error ? error : new Error(getErrorMessage(error), { cause: error });
+    throw new SfdxError(cause.message, undefined, undefined, undefined, cause);
   }
 }
